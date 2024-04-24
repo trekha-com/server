@@ -1,0 +1,7 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "author": "Gabriel Halus <gabrielhalus@gmail.com>",
+  "license": "MIT",
+  "private": true
+}
