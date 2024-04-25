@@ -6,6 +6,7 @@ dotenv.config();
 
 import connectDB from './config/database';
 import applyCors from './config/cors';
+import logger from './helpers/logger';
 
 const app: express.Application = express();
 let PORT = process.env.PORT || 3000;
@@ -16,6 +17,6 @@ app.use(express.json());
 applyCors(app);
 
 const server = http.createServer(app);
-server.listen(PORT, () => console.log(`🚀 Server is running on http://localhost:${PORT}/`));
+server.listen(PORT, () => logger.info(`Server is running on http://localhost:${PORT}/`));
 
 connectDB();
