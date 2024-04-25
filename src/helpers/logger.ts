@@ -1,7 +1,7 @@
 interface Logger {
-  info(message: string): void;
-  warn(message: string): void;
-  error(message: string): void;
+  info(...message: any[]): void;
+  warn(...message: any[]): void;
+  error(...message: any[]): void;
 }
 
 enum Level {
@@ -17,16 +17,16 @@ const COLORS = {
   error: '\x1b[31m', // Red
 };
 
-const log = (message: string, level: Level) => {
+const log = (level: Level, ...message: any[]) => {
   const timestamp = new Date().toISOString();
   const color = COLORS[level.toLowerCase() as keyof typeof COLORS] || COLORS.reset;
-  console.log(color + `[${timestamp}] ${level}: ${message}` + COLORS.reset);
+  console.log(color + `[${timestamp}] ${level}: ${message.join(', ')}` + COLORS.reset);
 };
 
 const logger: Logger = {
-  info: (message: string) => log(message, Level.INFO),
-  warn: (message: string) => log(message, Level.WARN),
-  error: (message: string) => log(message, Level.ERROR),
+  info: (...message: any[]) => log(Level.INFO, ...message),
+  warn: (...message: any[]) => log(Level.WARN, ...message),
+  error: (...message: any[]) => log(Level.ERROR, ...message),
 };
 
 export default logger;
