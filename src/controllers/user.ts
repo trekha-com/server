@@ -2,6 +2,7 @@ import express from 'express';
 import logger from '../helpers/logger';
 
 import { deleteUserById, getUserById, getUsers } from '../services/user';
+import Roles from '../config/roles';
 
 export const getAllUsers = async (req: express.Request, res: express.Response) => {
   try {
@@ -47,6 +48,31 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
     }
 
     user!.username = username;
+    await user?.save();
+
+    return res.status(200).json(user).end();
+  } catch (error: any) {
+    logger.error(error.message);
+    return res.sendStatus(500);
+  }
+};
+
+export const updateUserRole = async (req: express.Request, res: express.Response) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!role || !Object.values(Roles).includes(role)) {
+      return res.sendStatus(400);
+    }
+
+    const user = await getUserById(id);
+
+    if (!user) {
+      return res.sendStatus(404);
+    }
+
+    user!.role = role;
     await user?.save();
 
     return res.status(200).json(user).end();
