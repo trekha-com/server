@@ -35,11 +35,7 @@ export const getUser = async (req: express.Request, res: express.Response) => {
 export const updateUser = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
-    const { username } = req.body;
-
-    if (!username) {
-      return res.sendStatus(400);
-    }
+    const { username, preferences } = req.body;
 
     const user = await getUserById(id);
 
@@ -47,7 +43,8 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
       return res.sendStatus(404);
     }
 
-    user!.username = username;
+    user!.username = username ?? user.username;
+    user!.preferences = preferences ?? user.preferences;
     await user?.save();
 
     return res.status(200).json(user).end();
