@@ -9,13 +9,13 @@ export const isAuthenticated = async (req: express.Request, res: express.Respons
     const sessionToken = req.cookies['TREKHA-AUTH'];
 
     if (!sessionToken) {
-      return res.sendStatus(403);
+      return res.send(401).json({ message: 'Unauthorized' });
     }
 
     const existingUser = await getUserBySessionToken(sessionToken);
 
     if (!existingUser) {
-      return res.sendStatus(403);
+      return res.send(401).json({ message: 'Unauthorized' });
     }
 
     merge(req, { identity: existingUser });

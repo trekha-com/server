@@ -7,12 +7,8 @@ export const isAdmin = (req: express.Request, res: express.Response, next: expre
   try {
     const role = get(req, 'identity.role') as unknown as Roles;
 
-    if (!Object.values(Roles).includes(role)) {
-      return res.sendStatus(403);
-    }
-
     if (role !== Roles.ADMIN) {
-      return res.sendStatus(403);
+      return res.status(403).json({ message: 'Permission denied' });
     }
 
     next();
@@ -28,11 +24,11 @@ export const isOwner = async (req: express.Request, res: express.Response, next:
     const currentId = get(req, 'identity._id') as unknown as object;
 
     if (!currentId) {
-      return res.sendStatus(403);
+      return res.status(403).json({ message: 'Permission denied' });
     }
 
     if (currentId.toString() !== id) {
-      return res.sendStatus(403);
+      return res.status(403).json({ message: 'Permission denied' });
     }
 
     next();
