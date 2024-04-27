@@ -1,8 +1,8 @@
 import express from 'express';
 
 import { deleteUser, getAllUsers, getUser, updateUser, updateUserRole } from '../controllers/user';
-import { isAuthenticated, isOwner } from '../middlewares/authentication';
-import { isAdmin } from '../middlewares/authorization';
+import { isAuthenticated } from '../middlewares/authentication';
+import { isAdmin, isOwner } from '../middlewares/authorization';
 
 export default (router: express.Router) => {
   router.get('/users', isAuthenticated, isAdmin, getAllUsers);
