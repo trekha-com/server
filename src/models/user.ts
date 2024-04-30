@@ -7,7 +7,6 @@ const userSchema = new Schema(
     username: { type: String, required: true },
     authentication: {
       password: { type: String, required: true, select: false },
-      salt: { type: String, required: true, select: false },
       sessionToken: { type: String, select: false },
     },
     role: { type: String, default: Roles.USER },

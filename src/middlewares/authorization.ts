@@ -1,5 +1,6 @@
 import express from 'express';
 import { get } from 'lodash';
+import { Types } from 'mongoose';
 import logger from '../helpers/logger';
 import Roles from '../config/roles';
 
@@ -21,7 +22,7 @@ export const isAdmin = (req: express.Request, res: express.Response, next: expre
 export const isOwner = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
     const { id } = req.params;
-    const currentId = get(req, 'identity._id') as unknown as object;
+    const currentId = get(req, 'identity._id') as unknown as Types.ObjectId;
 
     if (!currentId) {
       return res.status(403).json({ message: 'Permission denied' });

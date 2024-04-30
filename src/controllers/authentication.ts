@@ -1,8 +1,9 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
+import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 import logger from '../helpers/logger';
 
 import { createUser, getUserByEmail } from '../services/user';
-import { hash, random } from '../helpers/authentication';
 
 export const login = async (req: express.Request, res: express.Response) => {
   try {
@@ -18,14 +19,12 @@ export const login = async (req: express.Request, res: express.Response) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const expectedHash = hash(user.authentication!.salt, password);
-
-    if (user.authentication!.password !== expectedHash) {
+    if (!compareSync(password, user.authentication!.password)) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const salt = random();
-    user.authentication!.sessionToken = hash(salt, user._id.toString());
+    user.authentication!.sessionToken = jwt.sign({ id: user._id }, process.env.SECRET!);
+    logger.info(user.authentication!.sessionToken);
 
     await user.save();
 
@@ -52,13 +51,12 @@ export const register = async (req: express.Request, res: express.Response) => {
       return res.status(409).json({ message: 'Email already in use' });
     }
 
-    const salt = random();
+    const salt = genSaltSync(10);
     const user = await createUser({
       email: email,
       username: username,
       authentication: {
-        password: hash(salt, password),
-        salt: salt,
+        password: hashSync(password, salt),
       },
     });
 
