@@ -2,7 +2,7 @@ import express from 'express';
 import logger from '../helpers/logger';
 
 import { deleteUserById, getUserById, getUsers } from '../services/user';
-import Roles from '../config/roles';
+import { UserRoles } from '../config/roles';
 
 export const getAllUsers = async (req: express.Request, res: express.Response) => {
   try {
@@ -59,7 +59,7 @@ export const updateUserRole = async (req: express.Request, res: express.Response
     const { id } = req.params;
     const { role } = req.body;
 
-    if (!role || !Object.values(Roles).includes(role)) {
+    if (!role || !Object.values(UserRoles).includes(role)) {
       return res.status(400).json({ message: 'Invalid data' });
     }
 

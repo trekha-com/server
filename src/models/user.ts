@@ -1,5 +1,5 @@
 import { InferSchemaType, Schema, model } from 'mongoose';
-import Roles from '../config/roles';
+import { UserRoles } from '../config/roles';
 
 const userSchema = new Schema(
   {
@@ -9,7 +9,7 @@ const userSchema = new Schema(
       password: { type: String, required: true, select: false },
       sessionToken: { type: String, select: false },
     },
-    role: { type: String, default: Roles.USER },
+    role: { type: String, default: UserRoles.USER },
     preferences: { type: Object, default: {} },
   },
   { timestamps: true },

@@ -2,13 +2,13 @@ import express from 'express';
 import { get } from 'lodash';
 import { Types } from 'mongoose';
 import logger from '../helpers/logger';
-import Roles from '../config/roles';
+import { UserRoles } from '../config/roles';
 
 export const isAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
-    const role = get(req, 'identity.role') as unknown as Roles;
+    const role = get(req, 'identity.role') as unknown as UserRoles;
 
-    if (role !== Roles.ADMIN) {
+    if (role !== UserRoles.ADMIN) {
       return res.status(403).json({ message: 'Permission denied' });
     }
 
