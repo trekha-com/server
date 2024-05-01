@@ -1,7 +1,7 @@
 import express from 'express';
 import logger from '../helpers/logger';
 
-import { deleteUserById, getUserById, getUsers } from '../services/user';
+import { deleteUserById, getUserById, getUsers, updateUserById } from '../services/user';
 import { UserRoles } from '../config/roles';
 
 export const getAllUsers = async (req: express.Request, res: express.Response) => {
@@ -37,15 +37,11 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
     const { id } = req.params;
     const { username, preferences } = req.body;
 
-    const user = await getUserById(id);
+    const user = await updateUserById(id, { username, preferences });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
-    user!.username = username ?? user.username;
-    user!.preferences = preferences ?? user.preferences;
-    await user?.save();
 
     return res.status(200).json(user);
   } catch (error: any) {
@@ -63,14 +59,11 @@ export const updateUserRole = async (req: express.Request, res: express.Response
       return res.status(400).json({ message: 'Invalid data' });
     }
 
-    const user = await getUserById(id);
+    const user = await updateUserById(id, { role });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
-    user!.role = role;
-    await user?.save();
 
     return res.status(200).json(user);
   } catch (error: any) {
@@ -85,7 +78,7 @@ export const deleteUser = async (req: express.Request, res: express.Response) =>
 
     const deletedUser = await deleteUserById(id);
 
-    if (!deleteUser) {
+    if (!deletedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
 

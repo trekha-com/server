@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 import logger from '../helpers/logger';
+import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 
 import { createUser, getUserByEmail } from '../services/user';
 
