@@ -4,16 +4,16 @@ export const getUsers = () => {
   return UserModel.find();
 };
 
+export const getUserById = (id: string) => {
+  return UserModel.findOne({ _id: id });
+};
+
 export const getUserByEmail = (email: string) => {
   return UserModel.findOne({ email });
 };
 
 export const getUserBySessionToken = (sessionToken: string) => {
   return UserModel.findOne({ 'authentication.sessionToken': sessionToken });
-};
-
-export const getUserById = (id: string) => {
-  return UserModel.findOne({ _id: id });
 };
 
 export const createUser = async (values: Record<string, any>) => {
