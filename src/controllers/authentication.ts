@@ -24,7 +24,6 @@ export const login = async (req: express.Request, res: express.Response) => {
     }
 
     user.authentication!.sessionToken = jwt.sign({ id: user._id }, process.env.SECRET!);
-    logger.info(user.authentication!.sessionToken);
 
     await user.save();
 
