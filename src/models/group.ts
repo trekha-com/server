@@ -1,9 +1,23 @@
 import { InferSchemaType, Schema, model } from 'mongoose';
+import { MemberRoles } from '../config/roles';
 
 const groupSchema = new Schema(
   {
     name: { type: String, required: true },
     preferences: { type: Object, default: {} },
+    members: [
+      {
+        user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        role: { type: String, default: MemberRoles.MEMBER },
+      },
+    ],
+    invites: [
+      {
+        token: { type: String, required: true },
+        maxUses: { type: Number },
+        expirationDate: { type: String },
+      },
+    ],
   },
   { timestamps: true },
 );
