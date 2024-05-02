@@ -18,5 +18,5 @@ export const deleteGroupById = (id: string) => {
 };
 
 export const updateGroupById = (id: string, values: Record<string, any>) => {
-  return GroupModel.findOneAndUpdate({ _id: id }, values);
+  return GroupModel.findOneAndUpdate({ _id: id }, values, { new: true });
 };
