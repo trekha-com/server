@@ -1,10 +1,10 @@
 import express from 'express';
 import { merge } from 'lodash';
-import logger from '../helpers/logger';
 
+import logger from '../helpers/logger';
 import { getUserBySessionToken } from '../services/user';
 
-export const isAuthenticated = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export const ensureAuthenticated = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
     const sessionToken = req.cookies['TREKHA-AUTH'];
 

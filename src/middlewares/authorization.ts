@@ -1,15 +1,18 @@
 import express from 'express';
-import { get } from 'lodash';
+import { get, some } from 'lodash';
 import { Types } from 'mongoose';
+
 import logger from '../helpers/logger';
-import { UserRoles } from '../config/roles';
+import { ensureAuthenticated } from './authentication';
+import { getGroupById } from '../services/group';
+import { MemberRoles, UserRoles } from '../config/roles';
 
-export const isAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export const ensureAdminRole = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
-    const role = get(req, 'identity.role') as unknown as UserRoles;
+    const authenticatedUserRole = get(req, 'identity.role') as unknown as UserRoles;
 
-    if (role !== UserRoles.ADMIN) {
-      return res.status(403).json({ message: 'Permission denied' });
+    if (authenticatedUserRole !== UserRoles.ADMIN) {
+      return res.status(403).json({ message: 'Permission denied: Admin privileges required' });
     }
 
     next();
@@ -19,17 +22,19 @@ export const isAdmin = (req: express.Request, res: express.Response, next: expre
   }
 };
 
-export const isOwner = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export const ensureAccountOwnership = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
     const { id } = req.params;
-    const currentId = get(req, 'identity._id') as unknown as Types.ObjectId;
+    const authenticatedUserId = get(req, 'identity._id') as unknown as Types.ObjectId;
+    const authenticatedUserRole = get(req, 'identity.role') as unknown as UserRoles;
 
-    if (!currentId) {
-      return res.status(403).json({ message: 'Permission denied' });
+    // Admins can bypass ownership check
+    if (authenticatedUserRole === UserRoles.ADMIN) {
+      return next();
     }
 
-    if (currentId.toString() !== id) {
-      return res.status(403).json({ message: 'Permission denied' });
+    if (authenticatedUserId.toString() !== id) {
+      return res.status(403).json({ message: 'Permission denied: Account ownership required' });
     }
 
     next();
@@ -38,3 +43,71 @@ export const isOwner = async (req: express.Request, res: express.Response, next:
     return res.sendStatus(500);
   }
 };
+
+export const ensureGroupMembership = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  try {
+    const { id } = req.params;
+    const authenticatedUserId = get(req, 'identity._id') as unknown as Types.ObjectId;
+    const authenticatedUserRole = get(req, 'identity.role') as unknown as UserRoles;
+
+    // Admins can bypass membership check
+    if (authenticatedUserRole === UserRoles.ADMIN) {
+      return next();
+    }
+
+    const group = await getGroupById(id);
+
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    const isMember = some(group.members, (member) => member.user.equals(authenticatedUserId));
+
+    if (!isMember) {
+      return res.status(403).json({ message: 'Permission denied: Group membership required' });
+    }
+
+    next();
+  } catch (error: any) {
+    logger.error(error.message);
+    return res.sendStatus(500);
+  }
+};
+
+export const ensureGroupAdmin = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  try {
+    const { id } = req.params;
+    const authenticatedUserId = get(req, 'identity._id') as unknown as Types.ObjectId;
+    const authenticatedUserRole = get(req, 'identity.role') as unknown as UserRoles;
+
+    // Admins can bypass group admin check
+    if (authenticatedUserRole === UserRoles.ADMIN) {
+      return next();
+    }
+
+    const group = await getGroupById(id);
+
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    const isAdmin = some(group.members, (member) => member.user.equals(authenticatedUserId) && member.role === MemberRoles.ADMIN);
+
+    if (!isAdmin) {
+      return res.status(403).json({ message: 'Permission denied: Group admin privileges required' });
+    }
+
+    next();
+  } catch (error: any) {
+    logger.error(error.message);
+    return res.sendStatus(500);
+  }
+};
+
+export const accountMiddlwares = [ensureAuthenticated, ensureAccountOwnership];
+
+export const adminMiddlewares = [ensureAuthenticated, ensureAdminRole];
+
+export const groupMiddlewares = [ensureAuthenticated, ensureGroupMembership];
+
+export const groupAdminMiddlewares = [ensureAuthenticated, ensureGroupAdmin];

@@ -1,13 +1,13 @@
 import express from 'express';
 
+import { ensureAuthenticated } from '../middlewares/authentication';
+import { adminMiddlewares, groupAdminMiddlewares, groupMiddlewares } from '../middlewares/authorization';
 import { deleteGroup, getAllGroups, getGroup, newGroup, updateGroup } from '../controllers/group';
-import { isAuthenticated } from '../middlewares/authentication';
-import { isAdmin } from '../middlewares/authorization';
 
 export default (router: express.Router) => {
-  router.get('/groups', isAuthenticated, isAdmin, getAllGroups);
-  router.get('/groups/:id', isAuthenticated, getGroup);
-  router.post('/groups', isAuthenticated, newGroup);
-  router.put('/groups/:id', isAuthenticated, updateGroup);
-  router.delete('/groups/:id', isAuthenticated, deleteGroup);
+  router.get('/groups', adminMiddlewares, getAllGroups);
+  router.get('/groups/:id', groupMiddlewares, getGroup);
+  router.post('/groups', ensureAuthenticated, newGroup);
+  router.put('/groups/:id', groupAdminMiddlewares, updateGroup);
+  router.delete('/groups/:id', groupAdminMiddlewares, deleteGroup);
 };
