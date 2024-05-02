@@ -1,8 +1,9 @@
 import express from 'express';
-import logger from '../helpers/logger';
+import { genSaltSync, hashSync } from 'bcrypt';
 
-import { deleteUserById, getUserById, getUsers, updateUserById } from '../services/userService';
+import logger from '../helpers/logger';
 import { UserRoles } from '../config/roles';
+import { createUser, deleteUserById, getUserByEmail, getUserById, getUsers, updateUserById } from '../services/userService';
 
 export const getAllUsers = async (req: express.Request, res: express.Response) => {
   try {
@@ -15,7 +16,7 @@ export const getAllUsers = async (req: express.Request, res: express.Response) =
   }
 };
 
-export const getUser = async (req: express.Request, res: express.Response) => {
+export const getSingleUser = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
 
@@ -24,6 +25,36 @@ export const getUser = async (req: express.Request, res: express.Response) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    return res.status(200).json(user);
+  } catch (error: any) {
+    logger.error(error.message);
+    return res.sendStatus(500);
+  }
+};
+
+export const createNewUser = async (req: express.Request, res: express.Response) => {
+  try {
+    const { email, password, username } = req.body;
+
+    if (!email || !password || !username) {
+      return res.status(400).json({ message: 'Missing fields' });
+    }
+
+    const existingUser = await getUserByEmail(email);
+
+    if (existingUser) {
+      return res.status(409).json({ message: 'Email already in use' });
+    }
+
+    const salt = genSaltSync(10);
+    const user = await createUser({
+      email: email,
+      username: username,
+      authentication: {
+        password: hashSync(password, salt),
+      },
+    });
 
     return res.status(200).json(user);
   } catch (error: any) {
@@ -72,7 +103,7 @@ export const updateUserRole = async (req: express.Request, res: express.Response
   }
 };
 
-export const deleteUser = async (req: express.Request, res: express.Response) => {
+export const removeUser = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
 

@@ -1,8 +1,8 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import logger from '../helpers/logger';
 import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 
+import logger from '../helpers/logger';
 import { createUser, getUserByEmail } from '../services/userService';
 
 export const login = async (req: express.Request, res: express.Response) => {

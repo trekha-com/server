@@ -1,9 +1,9 @@
 import express from 'express';
-import logger from '../helpers/logger';
 import { get } from 'lodash';
 import { Types } from 'mongoose';
-import { MemberRoles } from '../config/roles';
 
+import logger from '../helpers/logger';
+import { MemberRoles } from '../config/roles';
 import { createGroup, deleteGroupById, getGroupById, getGroups, updateGroupById } from '../services/groupService';
 
 export const getAllGroups = async (req: express.Request, res: express.Response) => {
@@ -17,7 +17,7 @@ export const getAllGroups = async (req: express.Request, res: express.Response) 
   }
 };
 
-export const getGroup = async (req: express.Request, res: express.Response) => {
+export const getSingleGroup = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
 
@@ -34,7 +34,7 @@ export const getGroup = async (req: express.Request, res: express.Response) => {
   }
 };
 
-export const newGroup = async (req: express.Request, res: express.Response) => {
+export const createNewGroup = async (req: express.Request, res: express.Response) => {
   try {
     const { name } = req.body;
     const { _id: ownerId } = get(req, 'identity._id') as unknown as Types.ObjectId;
@@ -70,7 +70,7 @@ export const updateGroup = async (req: express.Request, res: express.Response) =
   }
 };
 
-export const deleteGroup = async (req: express.Request, res: express.Response) => {
+export const removeGroup = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
 
