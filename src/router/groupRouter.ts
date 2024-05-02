@@ -6,8 +6,8 @@ import { removeGroup, getAllGroups, getSingleGroup, createNewGroup, updateGroup 
 
 export default (router: express.Router) => {
   router.get('/groups', adminMiddlewares, getAllGroups);
-  router.get('/groups/:id', groupMiddlewares, getSingleGroup);
+  router.get('/groups/:groupId', groupMiddlewares, getSingleGroup);
   router.post('/groups', ensureAuthenticated, createNewGroup);
-  router.put('/groups/:id', groupAdminMiddlewares, updateGroup);
-  router.delete('/groups/:id', groupAdminMiddlewares, removeGroup);
+  router.put('/groups/:groupId', groupAdminMiddlewares, updateGroup);
+  router.delete('/groups/:groupId', groupAdminMiddlewares, removeGroup);
 };

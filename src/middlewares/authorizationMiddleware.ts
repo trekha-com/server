@@ -24,7 +24,7 @@ export const ensureAdminRole = (req: express.Request, res: express.Response, nex
 
 export const ensureAccountOwnership = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
-    const { id } = req.params;
+    const { userId } = req.params;
     const authenticatedUserId = get(req, 'identity._id') as unknown as Types.ObjectId;
     const authenticatedUserRole = get(req, 'identity.role') as unknown as UserRoles;
 
@@ -33,7 +33,7 @@ export const ensureAccountOwnership = async (req: express.Request, res: express.
       return next();
     }
 
-    if (authenticatedUserId.toString() !== id) {
+    if (authenticatedUserId.toString() !== userId) {
       return res.status(403).json({ message: 'Permission denied: Account ownership required' });
     }
 
@@ -46,7 +46,7 @@ export const ensureAccountOwnership = async (req: express.Request, res: express.
 
 export const ensureGroupMembership = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
-    const { id } = req.params;
+    const { groupId } = req.params;
     const authenticatedUserId = get(req, 'identity._id') as unknown as Types.ObjectId;
     const authenticatedUserRole = get(req, 'identity.role') as unknown as UserRoles;
 
@@ -55,7 +55,7 @@ export const ensureGroupMembership = async (req: express.Request, res: express.R
       return next();
     }
 
-    const group = await getGroupById(id);
+    const group = await getGroupById(groupId);
 
     if (!group) {
       return res.status(404).json({ message: 'Group not found' });
@@ -76,7 +76,7 @@ export const ensureGroupMembership = async (req: express.Request, res: express.R
 
 export const ensureGroupAdmin = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
-    const { id } = req.params;
+    const { groupId } = req.params;
     const authenticatedUserId = get(req, 'identity._id') as unknown as Types.ObjectId;
     const authenticatedUserRole = get(req, 'identity.role') as unknown as UserRoles;
 
@@ -85,7 +85,7 @@ export const ensureGroupAdmin = async (req: express.Request, res: express.Respon
       return next();
     }
 
-    const group = await getGroupById(id);
+    const group = await getGroupById(groupId);
 
     if (!group) {
       return res.status(404).json({ message: 'Group not found' });

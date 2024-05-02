@@ -19,9 +19,9 @@ export const getAllGroups = async (req: express.Request, res: express.Response) 
 
 export const getSingleGroup = async (req: express.Request, res: express.Response) => {
   try {
-    const { id } = req.params;
+    const { groupId } = req.params;
 
-    const group = getGroupById(id);
+    const group = getGroupById(groupId);
 
     if (!group) {
       return res.status(404).json({ message: 'Group not found' });
@@ -43,7 +43,7 @@ export const createNewGroup = async (req: express.Request, res: express.Response
       return res.status(400).json({ message: 'Invalid data' });
     }
 
-    const group = await createGroup({ name, members: [{ user: ownerId, role: MemberRoles.OWNER }] });
+    const group = await createGroup({ name, members: [{ user: ownerId, role: MemberRoles.ADMIN }] });
 
     return res.status(200).json(group);
   } catch (error: any) {
@@ -54,10 +54,10 @@ export const createNewGroup = async (req: express.Request, res: express.Response
 
 export const updateGroup = async (req: express.Request, res: express.Response) => {
   try {
-    const { id } = req.params;
+    const { groupId } = req.params;
     const { name, preferences } = req.body;
 
-    const group = await updateGroupById(id, { name, preferences });
+    const group = await updateGroupById(groupId, { name, preferences });
 
     if (!group) {
       return res.status(404).json({ message: 'Group not found' });
@@ -72,9 +72,9 @@ export const updateGroup = async (req: express.Request, res: express.Response) =
 
 export const removeGroup = async (req: express.Request, res: express.Response) => {
   try {
-    const { id } = req.params;
+    const { groupId } = req.params;
 
-    const deletedGroup = await deleteGroupById(id);
+    const deletedGroup = await deleteGroupById(groupId);
 
     if (!deletedGroup) {
       return res.status(404).json({ message: 'Group not found' });

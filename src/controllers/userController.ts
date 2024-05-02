@@ -18,9 +18,9 @@ export const getAllUsers = async (req: express.Request, res: express.Response) =
 
 export const getSingleUser = async (req: express.Request, res: express.Response) => {
   try {
-    const { id } = req.params;
+    const { userId } = req.params;
 
-    const user = await getUserById(id);
+    const user = await getUserById(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -65,10 +65,10 @@ export const createNewUser = async (req: express.Request, res: express.Response)
 
 export const updateUser = async (req: express.Request, res: express.Response) => {
   try {
-    const { id } = req.params;
+    const { userId } = req.params;
     const { username, preferences } = req.body;
 
-    const user = await updateUserById(id, { username, preferences });
+    const user = await updateUserById(userId, { username, preferences });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -83,14 +83,14 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
 
 export const updateUserRole = async (req: express.Request, res: express.Response) => {
   try {
-    const { id } = req.params;
+    const { userId } = req.params;
     const { role } = req.body;
 
     if (!role || !Object.values(UserRoles).includes(role)) {
       return res.status(400).json({ message: 'Invalid data' });
     }
 
-    const user = await updateUserById(id, { role });
+    const user = await updateUserById(userId, { role });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -105,9 +105,9 @@ export const updateUserRole = async (req: express.Request, res: express.Response
 
 export const removeUser = async (req: express.Request, res: express.Response) => {
   try {
-    const { id } = req.params;
+    const { userId } = req.params;
 
-    const deletedUser = await deleteUserById(id);
+    const deletedUser = await deleteUserById(userId);
 
     if (!deletedUser) {
       return res.status(404).json({ message: 'User not found' });
