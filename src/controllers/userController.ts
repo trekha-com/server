@@ -1,7 +1,7 @@
 import express from 'express';
 import logger from '../helpers/logger';
 
-import { deleteUserById, getUserById, getUsers, updateUserById } from '../services/user';
+import { deleteUserById, getUserById, getUsers, updateUserById } from '../services/userService';
 import { UserRoles } from '../config/roles';
 
 export const getAllUsers = async (req: express.Request, res: express.Response) => {

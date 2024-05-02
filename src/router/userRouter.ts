@@ -1,7 +1,7 @@
 import express from 'express';
 
-import { accountMiddlwares, adminMiddlewares } from '../middlewares/authorization';
-import { deleteUser, getAllUsers, getUser, updateUser, updateUserRole } from '../controllers/user';
+import { accountMiddlwares, adminMiddlewares } from '../middlewares/authorizationMiddleware';
+import { deleteUser, getAllUsers, getUser, updateUser, updateUserRole } from '../controllers/userController';
 
 export default (router: express.Router) => {
   router.get('/users', adminMiddlewares, getAllUsers);

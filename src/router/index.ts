@@ -1,8 +1,8 @@
 import express from 'express';
 
-import authentication from './authentication';
-import user from './user';
-import group from './group';
+import authentication from './authenticationRouter';
+import user from './userRouter';
+import group from './groupRouter';
 
 const router = express.Router();
 

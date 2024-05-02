@@ -1,4 +1,4 @@
-import GroupModel from '../models/group';
+import GroupModel from '../models/groupModel';
 
 export const getGroups = () => {
   return GroupModel.find();

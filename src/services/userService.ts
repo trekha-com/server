@@ -1,4 +1,4 @@
-import UserModel from '../models/user';
+import UserModel from '../models/userModel';
 
 export const getUsers = () => {
   return UserModel.find();

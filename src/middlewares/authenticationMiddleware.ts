@@ -2,7 +2,7 @@ import express from 'express';
 import { merge } from 'lodash';
 
 import logger from '../helpers/logger';
-import { getUserBySessionToken } from '../services/user';
+import { getUserBySessionToken } from '../services/userService';
 
 export const ensureAuthenticated = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {

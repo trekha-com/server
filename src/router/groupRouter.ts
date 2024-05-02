@@ -1,8 +1,8 @@
 import express from 'express';
 
-import { ensureAuthenticated } from '../middlewares/authentication';
-import { adminMiddlewares, groupAdminMiddlewares, groupMiddlewares } from '../middlewares/authorization';
-import { deleteGroup, getAllGroups, getGroup, newGroup, updateGroup } from '../controllers/group';
+import { ensureAuthenticated } from '../middlewares/authenticationMiddleware';
+import { adminMiddlewares, groupAdminMiddlewares, groupMiddlewares } from '../middlewares/authorizationMiddleware';
+import { deleteGroup, getAllGroups, getGroup, newGroup, updateGroup } from '../controllers/groupController';
 
 export default (router: express.Router) => {
   router.get('/groups', adminMiddlewares, getAllGroups);

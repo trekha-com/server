@@ -3,8 +3,8 @@ import { get, some } from 'lodash';
 import { Types } from 'mongoose';
 
 import logger from '../helpers/logger';
-import { ensureAuthenticated } from './authentication';
-import { getGroupById } from '../services/group';
+import { ensureAuthenticated } from './authenticationMiddleware';
+import { getGroupById } from '../services/groupService';
 import { MemberRoles, UserRoles } from '../config/roles';
 
 export const ensureAdminRole = (req: express.Request, res: express.Response, next: express.NextFunction) => {

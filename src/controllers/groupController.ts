@@ -4,7 +4,7 @@ import { get } from 'lodash';
 import { Types } from 'mongoose';
 import { MemberRoles } from '../config/roles';
 
-import { createGroup, deleteGroupById, getGroupById, getGroups, updateGroupById } from '../services/group';
+import { createGroup, deleteGroupById, getGroupById, getGroups, updateGroupById } from '../services/groupService';
 
 export const getAllGroups = async (req: express.Request, res: express.Response) => {
   try {
