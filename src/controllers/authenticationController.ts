@@ -1,11 +1,11 @@
-import express from 'express';
-import jwt from 'jsonwebtoken';
 import { genSaltSync, hashSync, compareSync } from 'bcrypt';
+import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 
-import logger from '../helpers/logger';
 import { createUser, getUserByEmail } from '../services/userService';
+import logger from '../helpers/logger';
 
-export const login = async (req: express.Request, res: express.Response) => {
+export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -36,7 +36,7 @@ export const login = async (req: express.Request, res: express.Response) => {
   }
 };
 
-export const register = async (req: express.Request, res: express.Response) => {
+export const register = async (req: Request, res: Response) => {
   try {
     const { email, password, username } = req.body;
 

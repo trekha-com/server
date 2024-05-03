@@ -1,13 +1,13 @@
-import express from 'express';
-import http from 'http';
-import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import express from 'express';
+import dotenv from 'dotenv';
+import http from 'http';
 
 dotenv.config();
 
 import connectDB from './config/database';
-import applyCors from './config/cors';
 import logger from './helpers/logger';
+import applyCors from './config/cors';
 import router from './router';
 
 const app: express.Application = express();

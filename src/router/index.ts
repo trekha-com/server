@@ -1,13 +1,13 @@
-import express from 'express';
+import { Router } from 'express';
 
-import authentication from './authenticationRouter';
-import user from './userRouter';
-import group from './groupRouter';
 import groupMembershipRouter from './groupMembershipRouter';
+import authentication from './authenticationRouter';
+import group from './groupRouter';
+import user from './userRouter';
 
-const router = express.Router();
+const router = Router();
 
-export default (): express.Router => {
+export default (): Router => {
   authentication(router);
   user(router);
   group(router);

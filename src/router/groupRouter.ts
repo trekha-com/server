@@ -1,10 +1,10 @@
-import express from 'express';
+import { Router } from 'express';
 
-import { ensureAuthenticated } from '../middlewares/authenticationMiddleware';
-import { adminMiddlewares, groupAdminMiddlewares, groupMiddlewares } from '../middlewares/authorizationMiddleware';
 import { removeGroup, getAllGroups, getSingleGroup, createNewGroup, updateGroup } from '../controllers/groupController';
+import { adminMiddlewares, groupAdminMiddlewares, groupMiddlewares } from '../middlewares/authorizationMiddleware';
+import { ensureAuthenticated } from '../middlewares/authenticationMiddleware';
 
-export default (router: express.Router) => {
+export default (router: Router) => {
   router.get('/groups', adminMiddlewares, getAllGroups);
   router.get('/groups/:groupId', groupMiddlewares, getSingleGroup);
   router.post('/groups', ensureAuthenticated, createNewGroup);

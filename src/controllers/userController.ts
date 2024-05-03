@@ -1,11 +1,11 @@
-import express from 'express';
 import { genSaltSync, hashSync } from 'bcrypt';
+import { Request, Response } from 'express';
 
-import logger from '../helpers/logger';
-import { UserRoles } from '../config/roles';
 import { createUser, deleteUserById, getUserByEmail, getUserById, getUsers, updateUserById } from '../services/userService';
+import { UserRoles } from '../config/roles';
+import logger from '../helpers/logger';
 
-export const getAllUsers = async (req: express.Request, res: express.Response) => {
+export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await getUsers();
 
@@ -16,7 +16,7 @@ export const getAllUsers = async (req: express.Request, res: express.Response) =
   }
 };
 
-export const getSingleUser = async (req: express.Request, res: express.Response) => {
+export const getSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
@@ -33,7 +33,7 @@ export const getSingleUser = async (req: express.Request, res: express.Response)
   }
 };
 
-export const createNewUser = async (req: express.Request, res: express.Response) => {
+export const createNewUser = async (req: Request, res: Response) => {
   try {
     const { email, password, username } = req.body;
 
@@ -63,7 +63,7 @@ export const createNewUser = async (req: express.Request, res: express.Response)
   }
 };
 
-export const updateUser = async (req: express.Request, res: express.Response) => {
+export const updateUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { username, preferences } = req.body;
@@ -81,7 +81,7 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
   }
 };
 
-export const updateUserRole = async (req: express.Request, res: express.Response) => {
+export const updateUserRole = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { role } = req.body;
@@ -103,7 +103,7 @@ export const updateUserRole = async (req: express.Request, res: express.Response
   }
 };
 
-export const removeUser = async (req: express.Request, res: express.Response) => {
+export const removeUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 

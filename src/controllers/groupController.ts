@@ -1,12 +1,12 @@
-import express from 'express';
-import { get } from 'lodash';
+import { Request, Response } from 'express';
 import { Types } from 'mongoose';
+import { get } from 'lodash';
 
-import logger from '../helpers/logger';
-import { MemberRoles } from '../config/roles';
 import { createGroup, deleteGroupById, getGroupById, getGroups, updateGroupById } from '../services/groupService';
+import { MemberRoles } from '../config/roles';
+import logger from '../helpers/logger';
 
-export const getAllGroups = async (req: express.Request, res: express.Response) => {
+export const getAllGroups = async (req: Request, res: Response) => {
   try {
     const groups = await getGroups();
 
@@ -17,7 +17,7 @@ export const getAllGroups = async (req: express.Request, res: express.Response) 
   }
 };
 
-export const getSingleGroup = async (req: express.Request, res: express.Response) => {
+export const getSingleGroup = async (req: Request, res: Response) => {
   try {
     const { groupId } = req.params;
 
@@ -34,7 +34,7 @@ export const getSingleGroup = async (req: express.Request, res: express.Response
   }
 };
 
-export const createNewGroup = async (req: express.Request, res: express.Response) => {
+export const createNewGroup = async (req: Request, res: Response) => {
   try {
     const { name } = req.body;
     const { _id: ownerId } = get(req, 'identity._id') as unknown as Types.ObjectId;
@@ -52,7 +52,7 @@ export const createNewGroup = async (req: express.Request, res: express.Response
   }
 };
 
-export const updateGroup = async (req: express.Request, res: express.Response) => {
+export const updateGroup = async (req: Request, res: Response) => {
   try {
     const { groupId } = req.params;
     const { name, preferences } = req.body;
@@ -70,7 +70,7 @@ export const updateGroup = async (req: express.Request, res: express.Response) =
   }
 };
 
-export const removeGroup = async (req: express.Request, res: express.Response) => {
+export const removeGroup = async (req: Request, res: Response) => {
   try {
     const { groupId } = req.params;
 

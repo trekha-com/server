@@ -1,13 +1,13 @@
-import express from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { get, some } from 'lodash';
 import { Types } from 'mongoose';
 
-import logger from '../helpers/logger';
 import { ensureAuthenticated } from './authenticationMiddleware';
-import { getGroupById } from '../services/groupService';
 import { MemberRoles, UserRoles } from '../config/roles';
+import { getGroupById } from '../services/groupService';
+import logger from '../helpers/logger';
 
-export const ensureAdminRole = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export const ensureAdminRole = (req: Request, res: Response, next: NextFunction) => {
   try {
     const authenticatedUserRole = get(req, 'identity.role') as unknown as UserRoles;
 
@@ -22,7 +22,7 @@ export const ensureAdminRole = (req: express.Request, res: express.Response, nex
   }
 };
 
-export const ensureAccountOwnership = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export const ensureAccountOwnership = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params;
     const authenticatedUserId = get(req, 'identity._id') as unknown as Types.ObjectId;
@@ -44,7 +44,7 @@ export const ensureAccountOwnership = async (req: express.Request, res: express.
   }
 };
 
-export const ensureGroupMembership = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export const ensureGroupMembership = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { groupId } = req.params;
     const authenticatedUserId = get(req, 'identity._id') as unknown as Types.ObjectId;
@@ -74,7 +74,7 @@ export const ensureGroupMembership = async (req: express.Request, res: express.R
   }
 };
 
-export const ensureGroupAdmin = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export const ensureGroupAdmin = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { groupId } = req.params;
     const authenticatedUserId = get(req, 'identity._id') as unknown as Types.ObjectId;
