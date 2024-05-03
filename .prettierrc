@@ -5,5 +5,16 @@
   "semi": true,
   "singleQuote": true,
   "tabWidth": 2,
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "overrides": [
+    {
+      "files": "*.ts",
+      "options": {
+        "parser": "typescript",
+        "plugins": ["prettier-plugin-packagejson", "prettier-plugin-sort-imports"],
+        "sortImports": true,
+        "sortImportsPath": "prettier-plugin-sort-imports"
+      }
+    }
+  ]
 }
