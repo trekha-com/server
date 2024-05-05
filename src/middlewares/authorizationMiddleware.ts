@@ -1,11 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
-import { get, some } from 'lodash';
-import { Types } from 'mongoose';
-
 import { ensureAuthenticated } from './authenticationMiddleware';
+import { NextFunction, Request, Response } from 'express';
 import { MemberRoles, UserRoles } from '../config/roles';
 import { getGroupById } from '../services/groupService';
 import logger from '../helpers/logger';
+import { get, some } from 'lodash';
+import { Types } from 'mongoose';
 
 export const ensureAdminRole = (req: Request, res: Response, next: NextFunction) => {
   try {

@@ -1,7 +1,6 @@
-import { Router } from 'express';
-
 import { removeUser, getAllUsers, getSingleUser, updateUser, updateUserRole } from '../controllers/userController';
 import { accountMiddlwares, adminMiddlewares } from '../middlewares/authorizationMiddleware';
+import { Router } from 'express';
 
 export default (router: Router) => {
   router.get('/users', adminMiddlewares, getAllUsers);

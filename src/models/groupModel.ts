@@ -1,5 +1,4 @@
 import { InferSchemaType, Schema, model } from 'mongoose';
-
 import { MemberRoles } from '../config/roles';
 
 const groupSchema = new Schema(

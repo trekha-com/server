@@ -1,8 +1,7 @@
-import { Router } from 'express';
-
 import groupMembershipRouter from './groupMembershipRouter';
 import authentication from './authenticationRouter';
 import group from './groupRouter';
+import { Router } from 'express';
 import user from './userRouter';
 
 const router = Router();

@@ -1,8 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
-import { merge } from 'lodash';
-
 import { getUserBySessionToken } from '../services/userService';
+import { NextFunction, Request, Response } from 'express';
 import logger from '../helpers/logger';
+import { merge } from 'lodash';
 
 export const ensureAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
   try {
