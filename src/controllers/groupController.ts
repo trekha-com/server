@@ -1,16 +1,15 @@
-import { Request, Response } from 'express';
-import { Types } from 'mongoose';
-import { get } from 'lodash';
-
 import { createGroup, deleteGroupById, getGroupById, getGroups, updateGroupById } from '../services/groupService';
 import { MemberRoles } from '../config/roles';
+import { Request, Response } from 'express';
 import logger from '../helpers/logger';
+import { Types } from 'mongoose';
+import { get } from 'lodash';
 
 export const getAllGroups = async (req: Request, res: Response) => {
   try {
     const groups = await getGroups();
 
-    return res.status(200).json(groups);
+    return res.status(200).json({ success: true, message: 'Groups fetched successfully', groups });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
@@ -24,10 +23,10 @@ export const getSingleGroup = async (req: Request, res: Response) => {
     const group = getGroupById(groupId);
 
     if (!group) {
-      return res.status(404).json({ message: 'Group not found' });
+      return res.status(404).json({ success: false, message: 'Group not found' });
     }
 
-    return res.status(200).json(group);
+    return res.status(200).json({ success: true, message: 'Group fetched successfully', group });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
@@ -40,12 +39,12 @@ export const createNewGroup = async (req: Request, res: Response) => {
     const { _id: ownerId } = get(req, 'identity._id') as unknown as Types.ObjectId;
 
     if (!name) {
-      return res.status(400).json({ message: 'Invalid data' });
+      return res.status(400).json({ success: false, message: 'Invalid data' });
     }
 
     const group = await createGroup({ name, members: [{ user: ownerId, role: MemberRoles.ADMIN }] });
 
-    return res.status(200).json(group);
+    return res.status(200).json({ success: true, message: 'Group created successfully', group });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
@@ -60,10 +59,10 @@ export const updateGroup = async (req: Request, res: Response) => {
     const group = await updateGroupById(groupId, { name, preferences });
 
     if (!group) {
-      return res.status(404).json({ message: 'Group not found' });
+      return res.status(404).json({ success: false, message: 'Group not found' });
     }
 
-    return res.status(200).json(group);
+    return res.status(200).json({ success: true, message: 'Group updated successfully', group });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
@@ -74,13 +73,13 @@ export const removeGroup = async (req: Request, res: Response) => {
   try {
     const { groupId } = req.params;
 
-    const deletedGroup = await deleteGroupById(groupId);
+    const group = await deleteGroupById(groupId);
 
-    if (!deletedGroup) {
-      return res.status(404).json({ message: 'Group not found' });
+    if (!group) {
+      return res.status(404).json({ success: false, message: 'Group not found' });
     }
 
-    return res.status(200).json(deletedGroup);
+    return res.status(200).json({ success: true, message: 'Group deleted successfully', group });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
