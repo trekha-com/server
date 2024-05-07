@@ -10,7 +10,9 @@ import http from 'http';
 dotenv.config();
 
 const app: express.Application = express();
-let PORT = process.env.PORT || 3000;
+
+const PORT = process.env.PORT || 3000;
+const BASE_PATH = process.env.BASE_PATH || '';
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -19,8 +21,8 @@ app.use(cookieParser());
 applyCors(app);
 
 const server = http.createServer(app);
-server.listen(PORT, () => logger.info(`Server is running on http://localhost:${PORT}/`));
+server.listen(PORT, () => logger.info(`Server is running on http://localhost:${PORT}/${BASE_PATH}`));
 
 connectDB();
 
-app.use('/', router());
+app.use(`/${BASE_PATH}`, router());
