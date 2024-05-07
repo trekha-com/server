@@ -9,13 +9,13 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Missing fields' });
+      return res.status(400).json({ message: 'Missing fields' });
     }
 
     const user = await getUserByEmail(email).select('+authentication.salt +authentication.password');
 
     if (!user || !compareSync(password, user.authentication!.password)) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     user.authentication!.sessionToken = jwt.sign({ id: user._id }, process.env.SECRET!);
@@ -24,7 +24,7 @@ export const login = async (req: Request, res: Response) => {
 
     res.cookie('TREKHA-AUTH', user.authentication!.sessionToken, { domain: 'localhost', path: '/' });
 
-    return res.status(200).json({ success: true, message: 'Login successful', user: { email: user.email, username: user.username } });
+    return res.status(200).json({ message: 'Login successful', user: { email: user.email, username: user.username } });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
@@ -36,13 +36,13 @@ export const register = async (req: Request, res: Response) => {
     const { email, password, username } = req.body;
 
     if (!email || !password || !username) {
-      return res.status(400).json({ success: false, message: 'Missing fields' });
+      return res.status(400).json({ message: 'Missing fields' });
     }
 
     const existingUser = await getUserByEmail(email);
 
     if (existingUser) {
-      return res.status(409).json({ success: false, message: 'Email already in use' });
+      return res.status(409).json({ message: 'Email already in use' });
     }
 
     const salt = genSaltSync(10);
@@ -54,7 +54,7 @@ export const register = async (req: Request, res: Response) => {
       },
     });
 
-    return res.status(200).json({ success: true, message: 'Register successful', user: { email: user.email, username: user.username } });
+    return res.status(200).json({ message: 'Register successful', user: { email: user.email, username: user.username } });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
