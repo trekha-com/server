@@ -18,9 +18,10 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
+    const userId = user._id.toString();
     const accessToken = jwt.sign({ id: user._id }, process.env.SECRET!);
 
-    return res.status(200).json({ message: 'Login successful', accessToken, tokenType: 'Bearer', expiresIn: 3600 });
+    return res.status(200).json({ message: 'Login successful', userId, accessToken, tokenType: 'Bearer', expiresIn: 3600 });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
@@ -50,8 +51,9 @@ export const register = async (req: Request, res: Response) => {
     });
 
     const accessToken = jwt.sign({ id: user._id }, process.env.SECRET!);
+    const userId = user._id.toString();
 
-    return res.status(200).json({ message: 'Register successful', accessToken, tokenType: 'Bearer', expiresIn: 3600 });
+    return res.status(200).json({ message: 'Register successful', userId, accessToken, tokenType: 'Bearer', expiresIn: 3600 });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
