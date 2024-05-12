@@ -1,5 +1,5 @@
 import { createUser, getUserByEmail } from '../services/userService';
-import { genSaltSync, hashSync, compareSync } from 'bcrypt';
+import { compareSync, genSaltSync, hashSync } from 'bcrypt';
 import { Request, Response } from 'express';
 import logger from '../helpers/logger';
 import jwt from 'jsonwebtoken';
@@ -12,19 +12,15 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Missing fields' });
     }
 
-    const user = await getUserByEmail(email).select('+authentication.salt +authentication.password');
+    const user = await getUserByEmail(email).select('+password');
 
-    if (!user || !compareSync(password, user.authentication!.password)) {
+    if (!user || !compareSync(password, user.password)) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    user.authentication!.sessionToken = jwt.sign({ id: user._id }, process.env.SECRET!);
+    const accessToken = jwt.sign({ id: user._id }, process.env.SECRET!);
 
-    await user.save();
-
-    res.cookie('TREKHA-AUTH', user.authentication!.sessionToken, { domain: 'localhost', path: '/' });
-
-    return res.status(200).json({ message: 'Login successful', user: { email: user.email, username: user.username } });
+    return res.status(200).json({ message: 'Login successful', accessToken, tokenType: 'Bearer', expiresIn: 3600 });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
@@ -46,15 +42,16 @@ export const register = async (req: Request, res: Response) => {
     }
 
     const salt = genSaltSync(10);
+
     const user = await createUser({
       email: email,
       username: username,
-      authentication: {
-        password: hashSync(password, salt),
-      },
+      password: hashSync(password, salt),
     });
 
-    return res.status(200).json({ message: 'Register successful', user: { email: user.email, username: user.username } });
+    const accessToken = jwt.sign({ id: user._id }, process.env.SECRET!);
+
+    return res.status(200).json({ message: 'Register successful', accessToken, tokenType: 'Bearer', expiresIn: 3600 });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);

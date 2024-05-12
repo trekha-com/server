@@ -1,4 +1,5 @@
 import UserModel from '../models/userModel';
+import jwt from 'jsonwebtoken';
 
 export const getUsers = () => {
   return UserModel.find();
@@ -12,8 +13,9 @@ export const getUserByEmail = (email: string) => {
   return UserModel.findOne({ email });
 };
 
-export const getUserBySessionToken = (sessionToken: string) => {
-  return UserModel.findOne({ 'authentication.sessionToken': sessionToken });
+export const getUserByAccessToken = (accessToken: string) => {
+  const { id } = jwt.decode(accessToken) as unknown as any;
+  return UserModel.findOne({ _id: id });
 };
 
 export const createUser = async (values: Record<string, any>) => {

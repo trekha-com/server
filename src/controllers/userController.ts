@@ -50,9 +50,7 @@ export const createNewUser = async (req: Request, res: Response) => {
     const user = await createUser({
       email: email,
       username: username,
-      authentication: {
-        password: hashSync(password, salt),
-      },
+      password: hashSync(password, salt),
     });
 
     return res.status(200).json({ message: 'User created successfully', user });

@@ -1,20 +1,28 @@
-import { getUserBySessionToken } from '../services/userService';
+import { getUserByAccessToken } from '../services/userService';
 import { NextFunction, Request, Response } from 'express';
 import logger from '../helpers/logger';
-import { merge } from 'lodash';
+import { get, merge } from 'lodash';
 
 export const ensureAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const sessionToken = req.cookies['TREKHA-AUTH'];
+    const authorizationHeader = get(req.headers, 'authorization');
+    let accessToken: string | null = null;
 
-    if (!sessionToken) {
-      return res.status(401).json({ message: 'Unauthorized' });
+    if (authorizationHeader) {
+      const tokenParts = authorizationHeader.split(' ');
+      if (tokenParts.length === 2 && tokenParts[0] === 'Bearer') {
+        accessToken = tokenParts[1];
+      } else {
+        return res.status(401).json({ message: 'Invalid token format' });
+      }
+    } else {
+      return res.status(401).json({ message: 'Authorization header missing' });
     }
 
-    const existingUser = await getUserBySessionToken(sessionToken);
+    const existingUser = await getUserByAccessToken(accessToken);
 
     if (!existingUser) {
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res.status(401).json({ message: 'User not found' });
     }
 
     merge(req, { identity: existingUser });

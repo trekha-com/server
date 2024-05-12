@@ -5,10 +5,7 @@ const userSchema = new Schema(
   {
     email: { type: String, required: true, unique: true },
     username: { type: String, required: true },
-    authentication: {
-      password: { type: String, required: true, select: false },
-      sessionToken: { type: String, select: false },
-    },
+    password: { type: String, required: true, select: false },
     role: { type: String, default: UserRoles.USER },
     preferences: { type: Object, default: {} },
   },
