@@ -14,8 +14,8 @@ export const getUserByEmail = (email: string) => {
 };
 
 export const getUserByAccessToken = (accessToken: string) => {
-  const { id } = jwt.decode(accessToken) as unknown as any;
-  return UserModel.findOne({ _id: id });
+  const { userId } = jwt.decode(accessToken) as unknown as any;
+  return UserModel.findOne({ _id: userId });
 };
 
 export const createUser = async (values: Record<string, any>) => {

@@ -19,7 +19,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const userId = user._id.toString();
-    const accessToken = jwt.sign({ id: user._id }, process.env.SECRET!);
+    const accessToken = jwt.sign({ userId }, process.env.SECRET!);
 
     return res.status(200).json({ message: 'Login successful', userId, accessToken, tokenType: 'Bearer', expiresIn: 3600 });
   } catch (error: any) {
@@ -50,8 +50,8 @@ export const register = async (req: Request, res: Response) => {
       password: hashSync(password, salt),
     });
 
-    const accessToken = jwt.sign({ id: user._id }, process.env.SECRET!);
     const userId = user._id.toString();
+    const accessToken = jwt.sign({ userId }, process.env.SECRET!);
 
     return res.status(200).json({ message: 'Register successful', userId, accessToken, tokenType: 'Bearer', expiresIn: 3600 });
   } catch (error: any) {
