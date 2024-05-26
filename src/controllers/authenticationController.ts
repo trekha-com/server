@@ -3,6 +3,19 @@ import { compareSync, genSaltSync, hashSync } from 'bcrypt';
 import { Request, Response } from 'express';
 import logger from '../helpers/logger';
 import jwt from 'jsonwebtoken';
+import { get } from 'lodash';
+
+const MAX_AGE = 60 * 60 * 24 * 30; // days
+
+export const getLoggedUser = async (req: Request, res: Response) => {
+  try {
+    const user = get(req, 'identity');
+    return res.status(200).json({ message: 'User fetched successfully', user });
+  } catch (error: any) {
+    logger.error(error.message);
+    return res.sendStatus(500);
+  }
+};
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -19,9 +32,17 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const userId = user._id.toString();
-    const accessToken = jwt.sign({ userId }, process.env.SECRET!);
+    const accessToken = jwt.sign({ userId }, process.env.SECRET!, { expiresIn: MAX_AGE });
 
-    return res.status(200).json({ message: 'Login successful', userId, accessToken, tokenType: 'Bearer', expiresIn: 3600 });
+    res.cookie('OutSiteJWT', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: MAX_AGE * 1000,
+      path: '/',
+    });
+
+    return res.status(200).json({ message: 'Authenticated' });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
@@ -51,9 +72,17 @@ export const register = async (req: Request, res: Response) => {
     });
 
     const userId = user._id.toString();
-    const accessToken = jwt.sign({ userId }, process.env.SECRET!);
+    const accessToken = jwt.sign({ userId }, process.env.SECRET!, { expiresIn: MAX_AGE });
 
-    return res.status(200).json({ message: 'Register successful', userId, accessToken, tokenType: 'Bearer', expiresIn: 3600 });
+    res.cookie('OutSiteJWT', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: MAX_AGE * 1000,
+      path: '/',
+    });
+
+    return res.status(200).json({ message: 'Authenticated' });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);

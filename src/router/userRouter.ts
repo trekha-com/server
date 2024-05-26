@@ -1,4 +1,4 @@
-import { removeUser, getAllUsers, getSingleUser, updateUser, updateUserRole } from '../controllers/userController';
+import { getAllUsers, getSingleUser, removeUser, updateUser, updateUserRole } from '../controllers/userController';
 import { accountMiddlwares, adminMiddlewares } from '../middlewares/authorizationMiddleware';
 import { Router } from 'express';
 

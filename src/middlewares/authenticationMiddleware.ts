@@ -3,20 +3,27 @@ import { NextFunction, Request, Response } from 'express';
 import logger from '../helpers/logger';
 import { get, merge } from 'lodash';
 
+// Helper function to extract and verify the token
+const extractToken = (authorizationHeader: string | undefined): string | null => {
+  if (!authorizationHeader) {
+    return null;
+  }
+
+  const tokenParts = authorizationHeader.split(' ');
+  if (tokenParts.length === 2 && tokenParts[0] === 'Bearer') {
+    return tokenParts[1];
+  }
+
+  return null;
+};
+
 export const ensureAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authorizationHeader = get(req.headers, 'authorization');
-    let accessToken: string | null = null;
+    const accessToken = extractToken(authorizationHeader);
 
-    if (authorizationHeader) {
-      const tokenParts = authorizationHeader.split(' ');
-      if (tokenParts.length === 2 && tokenParts[0] === 'Bearer') {
-        accessToken = tokenParts[1];
-      } else {
-        return res.status(401).json({ message: 'Invalid token format' });
-      }
-    } else {
-      return res.status(401).json({ message: 'Authorization header missing' });
+    if (!accessToken) {
+      return res.status(401).json({ message: 'Authorization header missing or invalid token format' });
     }
 
     const existingUser = await getUserByAccessToken(accessToken);
@@ -26,10 +33,9 @@ export const ensureAuthenticated = async (req: Request, res: Response, next: Nex
     }
 
     merge(req, { identity: existingUser });
-
     next();
   } catch (error: any) {
-    logger.error(error.message);
+    logger.error('Authentication error:', error);
     return res.sendStatus(500);
   }
 };
