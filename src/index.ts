@@ -1,3 +1,4 @@
+import { loggerMiddleware } from './middlewares/loggerMiddleware';
 import connectDB from './config/database';
 import cookieParser from 'cookie-parser';
 import logger from './helpers/logger';
@@ -25,4 +26,4 @@ server.listen(PORT, () => logger.info(`Server is running on http://localhost:${P
 
 connectDB();
 
-app.use(`/${BASE_PATH}`, router());
+app.use(`/${BASE_PATH}`, loggerMiddleware, router());

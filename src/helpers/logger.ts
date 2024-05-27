@@ -1,10 +1,12 @@
 interface Logger {
+  log(...message: any[]): void;
   info(...message: any[]): void;
   warn(...message: any[]): void;
   error(...message: any[]): void;
 }
 
 enum Level {
+  LOG = 'LOG',
   INFO = 'INFO',
   WARN = 'WARN',
   ERROR = 'ERROR',
@@ -12,6 +14,7 @@ enum Level {
 
 const COLORS = {
   reset: '\x1b[0m',
+  log: '\x1b[35m', // Purple
   info: '\x1b[36m', // Cyan
   warn: '\x1b[33m', // Yellow
   error: '\x1b[31m', // Red
@@ -24,6 +27,7 @@ const log = (level: Level, ...message: any[]) => {
 };
 
 const logger: Logger = {
+  log: (...message: any[]) => log(Level.LOG, ...message),
   info: (...message: any[]) => log(Level.INFO, ...message),
   warn: (...message: any[]) => log(Level.WARN, ...message),
   error: (...message: any[]) => log(Level.ERROR, ...message),
