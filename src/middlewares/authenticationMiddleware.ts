@@ -2,6 +2,7 @@ import { getUserByAccessToken } from '../services/userService';
 import { NextFunction, Request, Response } from 'express';
 import logger from '../helpers/logger';
 import { get, merge } from 'lodash';
+import jwt from 'jsonwebtoken';
 
 // Helper function to extract and verify the token
 const extractToken = (authorizationHeader: string | undefined): string | null => {
@@ -25,6 +26,12 @@ export const ensureAuthenticated = async (req: Request, res: Response, next: Nex
     if (!accessToken) {
       return res.status(401).json({ message: 'Authorization header missing or invalid token format' });
     }
+
+    jwt.verify(accessToken, process.env.SECRET!, (error: any, _: any) => {
+      if (error) {
+        return res.status(401).json({ message: 'Invalid token' });
+      }
+    });
 
     const existingUser = await getUserByAccessToken(accessToken);
 
