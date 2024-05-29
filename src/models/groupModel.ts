@@ -3,7 +3,7 @@ import { MemberRoles } from '../config/roles';
 
 const groupSchema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, trim: true },
     preferences: { type: Object, default: {} },
     members: [
       {

@@ -3,8 +3,8 @@ import { UserRoles } from '../config/roles';
 
 const userSchema = new Schema(
   {
-    email: { type: String, required: true, unique: true },
-    username: { type: String, required: true },
+    email: { type: String, required: true, trim: true, unique: true },
+    username: { type: String, required: true, trim: true },
     password: { type: String, required: true, select: false },
     role: { type: String, default: UserRoles.USER },
     preferences: { type: Object, default: {} },
