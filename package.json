@@ -7,7 +7,6 @@
   "scripts": {
     "prepare": "husky install",
     "build": "tsc",
-    "prestart": "yarn build",
     "start": "node dist/index.js",
     "dev": "tsx --watch src/index.ts"
   },
