@@ -32,17 +32,9 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const userId = user._id.toString();
-    const accessToken = jwt.sign({ userId }, process.env.SECRET!, { expiresIn: MAX_AGE });
+    const token = jwt.sign({ userId }, process.env.SECRET!, { expiresIn: MAX_AGE });
 
-    res.cookie('OutSiteJWT', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: MAX_AGE * 1000,
-      path: '/',
-    });
-
-    return res.status(200).json({ message: 'Authenticated' });
+    return res.status(200).json({ message: 'Authenticated', user, token });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
@@ -72,17 +64,9 @@ export const register = async (req: Request, res: Response) => {
     });
 
     const userId = user._id.toString();
-    const accessToken = jwt.sign({ userId }, process.env.SECRET!, { expiresIn: MAX_AGE });
+    const token = jwt.sign({ userId }, process.env.SECRET!, { expiresIn: MAX_AGE });
 
-    res.cookie('OutSiteJWT', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: MAX_AGE * 1000,
-      path: '/',
-    });
-
-    return res.status(200).json({ message: 'Authenticated' });
+    return res.status(200).json({ message: 'Authenticated', user, token });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
