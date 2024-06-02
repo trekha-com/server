@@ -1,16 +1,45 @@
 import { createUser, getUserByEmail } from '../services/userService';
 import { compareSync, genSaltSync, hashSync } from 'bcrypt';
 import { Request, Response } from 'express';
+import { User } from '../models/userModel';
 import logger from '../helpers/logger';
 import jwt from 'jsonwebtoken';
-import { get } from 'lodash';
 
-const MAX_AGE = 60 * 60 * 24 * 30; // days
+const MAX_AGE = 60 * 60 * 24 * 30;
+const SESSION_STORAGE_KEY = 'session';
 
-export const getLoggedUser = async (req: Request, res: Response) => {
+const setSessionCookie = (res: Response, payload: { token: string; user: User }) => {
+  res.cookie(SESSION_STORAGE_KEY, JSON.stringify(payload), {
+    maxAge: MAX_AGE * 1000,
+    path: '/',
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+  });
+};
+
+const signAccessToken = (userId: string) => {
+  return jwt.sign({ userId }, process.env.SECRET!, { expiresIn: MAX_AGE });
+};
+
+export const getSession = async (req: Request, res: Response) => {
   try {
-    const user = get(req, 'identity');
-    return res.status(200).json({ message: 'User fetched successfully', user });
+    const session = req.cookies[SESSION_STORAGE_KEY];
+
+    if (!session) {
+      return res.status(404).json({ message: 'Session not found' });
+    }
+
+    const { token, user } = JSON.parse(session);
+
+    if (!token || !user) {
+      return res.status(400).json({ message: 'Invalid session' });
+    }
+
+    const userId = user._id;
+    const newToken = signAccessToken(userId);
+
+    setSessionCookie(res, { token: newToken, user });
+    return res.status(200).json({ token: newToken, user });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
@@ -32,9 +61,10 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const userId = user._id.toString();
-    const token = jwt.sign({ userId }, process.env.SECRET!, { expiresIn: MAX_AGE });
+    const token = signAccessToken(userId);
 
-    return res.status(200).json({ message: 'Authenticated', user, token });
+    setSessionCookie(res, { token, user });
+    return res.status(200).json({ message: 'Authenticated', token, user });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
@@ -64,9 +94,10 @@ export const register = async (req: Request, res: Response) => {
     });
 
     const userId = user._id.toString();
-    const token = jwt.sign({ userId }, process.env.SECRET!, { expiresIn: MAX_AGE });
+    const token = signAccessToken(userId);
 
-    return res.status(200).json({ message: 'Authenticated', user, token });
+    setSessionCookie(res, { token, user });
+    return res.status(200).json({ message: 'Authenticated', token, user });
   } catch (error: any) {
     logger.error(error.message);
     return res.sendStatus(500);
